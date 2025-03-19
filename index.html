@@ -31,55 +31,10 @@
   </head>
   <body>
     <div class="loading-container">
-      <iframe id="payment-widget"></iframe>
-      <button onclick="readFrame();">Read my data</button>
+      <div id="payment-widget"></div>
     </div>
 
     <script>
-
-        async function readFrame() {
-          // Wait for iframe to load (use load event for external URLs)
-          const frame = document.getElementById('payment-widget');
-          processFrame(frame);
-        }
-
-        const processFrame = async (frame) => {
-          try {
-            // Capture iframe content
-            const canvas = await html2canvas(frame.contentDocument.body, {
-              allowTaint: true,
-              useCORS: false,
-              windowWidth: frame.scrollWidth,
-              windowHeight: frame.scrollHeight
-            });
-
-            let image = canvas.toDataURL("image/png", 0.5);
-
-            // Create an img element and append it to the page
-            var screenshotImg = document.createElement('img');
-            screenshotImg.src = image;
-            screenshotImg.style.width = '100%'; // Optional: Set the width of the screenshot image
-            screenshotImg.style.marginTop = '20px'; // Optional: Add some margin for better visibility
-
-            // Append the screenshot image to the page
-            document.body.appendChild(screenshotImg);
-  
-            // Perform OCR
-            const { data: { text } } = await Tesseract.recognize(
-              canvas.toDataURL('image/png'),
-              'eng',
-              { logger: m => console.log(m.status) }
-            );
-  
-            console.log('FOUND:', text);
-            alert('FOUND: ' + text);
-            
-          } catch (error) {
-            console.error('Error:', error);
-          }
-        };
-
-      (async () => {
         var widget = new PaymentWidget({
             container: 'payment-widget', // Fix here (pass ID, not element)
             amount: 1000,
@@ -95,17 +50,6 @@
 
         widget.render();
 
-        // Load required libraries
-        const loadScript = (src) => new Promise((resolve) => {
-          const script = document.createElement('script');
-          script.src = src;
-          script.onload = resolve;
-          document.head.appendChild(script);
-        });
-  
-        await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
-        await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js');
-      })();
     </script>
       
   </body>
