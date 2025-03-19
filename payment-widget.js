@@ -12,16 +12,12 @@
         return;
       }
 
-      // this.shadow = this.container.attachShadow({ mode: 'open' });
-      this.iframeDoc =
-        this.container.contentDocument ||
-        this.container.contentWindow?.document;
+      this.shadow = this.container.attachShadow({ mode: 'open' });
     }
 
     render() {
-      if (this.iframeDoc) {
-        this.iframeDoc.open();
-        this.iframeDoc.write(`
+
+      this.shadow.innerHTML = `
                 <style>
                     form {
                         font-family: Arial, sans-serif;
@@ -59,37 +55,12 @@
                     <input type="text" name="cvv" required /><br/>
                     <button type="submit">Pay Now</button>
                 </form>
-            `);
-        this.iframeDoc.close();
+            `;
+      
+  
 
-        this.iframeDoc.addEventListener("submit", async (event) => {
-          event.preventDefault();
+        this.addSubmitHandler();
 
-          const form = this.iframeDoc.querySelector("#payment-form");
-          const formData = new FormData(form);
-          const payload = {
-            card_number: formData.get("card_number"),
-            exp_date: formData.get("exp_date"),
-            cvv: formData.get("cvv"),
-            amount: this.config.amount,
-            currency: this.config.currency,
-            publicKey: this.config.publicKey,
-          };
-
-          // Simulate payment processing
-          const response = await new Promise((resolve) => {
-            alert("Processing Payment...");
-            setTimeout(() => resolve("success"), 2000);
-          });
-          if (response === "success") {
-            this.config.onSuccess(payload);
-          } else {
-            this.config.onError("Payment failed");
-          }
-        });
-      }
-
-      // this.addSubmitHandler();
     }
 
     addSubmitHandler() {
