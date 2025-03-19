@@ -27,7 +27,11 @@
         margin: 20px 0;
       }
     </style>
-    <script src="./payment-widget.js"></script>
+    <script>
+      const script = document.createElement('script');
+      script.src = `./payment-widget.js?t=${Date.now()}`;
+      document.head.appendChild(script);
+    </script>
   </head>
   <body>
     <div class="loading-container">
